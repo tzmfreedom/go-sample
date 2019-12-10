@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 func main() {
 	fmt.Println("hoge")
 	var i int
@@ -8,4 +10,5 @@ func main() {
 	fmt.Println("foo")
 	i = 234
 	fmt.Println("bar")
+	fmt.Println(i)
 }
