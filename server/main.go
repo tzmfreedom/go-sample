@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
+	"flag"
 	"io/ioutil"
 	"net/http"
 )
@@ -13,49 +14,46 @@ const (
 	headerGRPCMessage    = "Grpc-Message"
 	headerGRPCStatusCode = "Grpc-Status"
 
-	contentTypeGRPCJSON = "application/grpc+json"
-	grpcNoCompression byte = 0x00
+	contentTypeGRPCJSON      = "application/grpc+json"
+	grpcNoCompression   byte = 0x00
 )
 
 func main() {
+	addr := flag.String("addr", ":8080", "host address")
+	flag.Parse()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		req.URL.Scheme = "https"
-		req.URL.Host = req.Header.Get("endpoint")
-		r := modifyRequestToJSONgRPC(req)
-		buf, err := request(r)
+		buf, err := request(req)
 		if err != nil {
 			handleError(w, err)
 			return
 		}
-		w.Write(buf)
-		w.WriteHeader(http.StatusOK)
+		_, err = w.Write(buf)
+		if err != nil {
+			handleError(w, err)
+			return
+		}
 	})
-	if err := http.ListenAndServe(":8080", mux); err != nil {
+	if err := http.ListenAndServe(*addr, mux); err != nil {
 		panic(err)
 	}
 }
 
 func request(req *http.Request) ([]byte, error) {
-	req, err := http.NewRequest("GET", req.URL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	for k, v := range req.Header {
-		req.Header.Set(k, v[0])
-	}
-
+	req.URL.Scheme = "https"
+	req.URL.Host = req.Header.Get("endpoint")
+	r := modifyRequestToJSONgRPC(req)
 	client := &http.Client{}
-	res, err := client.Do(req)
+	res, err := client.Do(r)
 	if err != nil {
 		return nil, err
 	}
 
-	r, err := handleGRPCResponse(res)
+	gr, err := handleGRPCResponse(res)
 	if err != nil {
 		return nil, err
 	}
-	return ioutil.ReadAll(r.Body)
+	return ioutil.ReadAll(gr.Body)
 }
 
 func handleError(w http.ResponseWriter, err error) {
@@ -90,7 +88,10 @@ func modifyRequestToJSONgRPC(r *http.Request) *http.Request {
 	_, _ = buff.Write(body)
 
 	// create new request
-	req, _ := http.NewRequest(r.Method, r.URL.String(), buff)
+	req, err := http.NewRequest(r.Method, r.URL.String(), buff)
+	if err != nil {
+		panic(err)
+	}
 	req.Header = r.Header
 
 	// remove content length header
