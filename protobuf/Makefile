@@ -1,6 +1,6 @@
 .PHONY: proto/build
 proto/build:
-	protoc -I helloworld helloworld/hello.proto --go-grpc_out=helloworld
+	protoc -I helloworld helloworld/hello.proto --go_out=helloworld --go-grpc_out=helloworld
 
 .PHONY: client/run
 client/run:
