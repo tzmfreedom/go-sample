@@ -6,24 +6,25 @@ import (
 )
 
 type UserService struct {
-	repo *repository.UserRepository
+	userRepo   *repository.UserRepository
+	notifyRepo *repository.UserNotifyRepository
 }
 
-func NewUserService(repo *repository.UserRepository) *UserService {
+func NewUserService(userRepo *repository.UserRepository, notifyRepo *repository.UserNotifyRepository) *UserService {
 	return &UserService{
-		repo: repo,
+		userRepo:   userRepo,
+		notifyRepo: notifyRepo,
 	}
 }
 
 func (s *UserService) UpdateAndNotify(id model.UserID) (*model.User, error) {
-	user, err := s.repo.FindByID(id)
+	user, err := s.userRepo.FindByID(id)
 	if err != nil {
 		return nil, err
 	}
-	err = s.repo.Update(user)
+	err = s.userRepo.Update(user)
 	if err != nil {
 		return nil, err
 	}
-	// Notify
-	return nil, err
+	return user, s.notifyRepo.Notify(user)
 }

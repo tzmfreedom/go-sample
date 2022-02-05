@@ -1,23 +1,31 @@
 package view
 
 import (
+	"encoding/json"
+	"fmt"
 	"html/template"
 	"io"
-
-	"github.com/tzmfreedom/go-sample/mvc/model"
 )
 
-type UserView struct{}
+type View struct{}
 
-func NewUserView() *UserView {
-	return &UserView{}
+func NewView() *View {
+	return &View{}
 }
 
-func (v *UserView) Render(w io.Writer, u *model.User) error {
-	t := template.New("hoge")
-	t, err := t.Parse("hello {{ .Name }}")
+func (v *View) RenderHTML(w io.Writer, f string, data interface{}) error {
+	t, err := template.ParseFiles(f)
 	if err != nil {
 		return err
 	}
-	return t.Execute(w, u)
+	return t.Execute(w, data)
+}
+
+func (v *View) RenderJSON(w io.Writer, data interface{}) error {
+	buf, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	_, err = fmt.Fprintf(w, string(buf))
+	return err
 }

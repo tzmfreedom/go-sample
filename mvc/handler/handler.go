@@ -12,14 +12,16 @@ import (
 )
 
 type UserHandler struct {
-	repo *repository.UserRepository
-	view *view.UserView
+	userRepo   *repository.UserRepository
+	notifyRepo *repository.UserNotifyRepository
+	view       *view.View
 }
 
-func NewUserHandler(repo *repository.UserRepository, view *view.UserView) *UserHandler {
+func NewUserHandler(userRepo *repository.UserRepository, notifyRepo *repository.UserNotifyRepository, view *view.View) *UserHandler {
 	return &UserHandler{
-		repo: repo,
-		view: view,
+		userRepo:   userRepo,
+		notifyRepo: notifyRepo,
+		view:       view,
 	}
 }
 
@@ -43,27 +45,30 @@ func (h *UserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (h *UserHandler) find(w http.ResponseWriter, r *http.Request) error {
 	vs := r.URL.Query()
 	id := vs.Get("id")
-	user, err := h.repo.FindByID(model.UserID(id))
+	user, err := h.userRepo.FindByID(model.UserID(id))
 	if err != nil {
 		return err
 	}
-	return h.view.Render(w, user)
+	return h.view.RenderHTML(w, "", user)
 }
 
 func (h *UserHandler) create(w http.ResponseWriter, r *http.Request) error {
 	vs := r.URL.Query()
 	id := vs.Get("id")
-	s := service.NewUserService(h.repo)
-	_, err := s.UpdateAndNotify(model.UserID(id))
-	return err
+	s := service.NewUserService(h.userRepo, h.notifyRepo)
+	user, err := s.UpdateAndNotify(model.UserID(id))
+	if err != nil {
+		return err
+	}
+	return h.view.RenderJSON(w, user)
 }
 
 func (h *UserHandler) update(w http.ResponseWriter, r *http.Request) error {
 	vs := r.URL.Query()
 	id := vs.Get("id")
-	user, err := h.repo.FindByID(model.UserID(id))
+	user, err := h.userRepo.FindByID(model.UserID(id))
 	if err != nil {
 	}
 	user.SetName(vs.Get("name"))
-	return h.repo.Update(user)
+	return h.userRepo.Update(user)
 }

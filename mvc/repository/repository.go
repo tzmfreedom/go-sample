@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"net/smtp"
 
 	"github.com/tzmfreedom/go-sample/mvc/model"
 )
@@ -32,4 +33,18 @@ func (r *UserRepository) FindByID(id model.UserID) (*model.User, error) {
 func (r *UserRepository) Update(user *model.User) error {
 	_, err := r.db.Exec("UPDATE users")
 	return err
+}
+
+type UserNotifyRepository struct{}
+
+func NewUserNotifyRepository() *UserNotifyRepository {
+	return &UserNotifyRepository{}
+}
+
+func (r *UserNotifyRepository) Notify(user *model.User) error {
+	smtpSvr := "127.0.0.1"
+	from := "support@example.com"
+	auth := smtp.PlainAuth("", "user", "password", "smtp.gmail.com")
+	body := ""
+	return smtp.SendMail(smtpSvr, auth, from, []string{string(user.Email)}, []byte(body))
 }

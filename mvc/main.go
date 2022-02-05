@@ -35,13 +35,17 @@ type container struct {
 }
 
 func (c *container) GetUserHandler() *handler.UserHandler {
-	return handler.NewUserHandler(c.GetUserRepository(), c.GetUserView())
+	return handler.NewUserHandler(c.GetUserRepository(), c.GetUserNotifyRepository(), c.GetView())
 }
 
 func (c *container) GetUserRepository() *repository.UserRepository {
 	return repository.NewUserRepository(c.db)
 }
 
-func (c *container) GetUserView() *view.UserView {
-	return view.NewUserView()
+func (c *container) GetUserNotifyRepository() *repository.UserNotifyRepository {
+	return repository.NewUserNotifyRepository()
+}
+
+func (c *container) GetView() *view.View {
+	return view.NewView()
 }
