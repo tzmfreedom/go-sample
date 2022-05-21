@@ -9,7 +9,7 @@ type PostDto struct {
 	Body  string
 }
 
-type PostRepositoryImpl struct{
+type PostRepositoryImpl struct {
 	db *sql.DB
 }
 
@@ -21,7 +21,7 @@ func (r *PostRepositoryImpl) GetPosts(name string) []*PostDto {
 	return []*PostDto{
 		{
 			Title: "Hoge",
-			Body: "Fuga",
+			Body:  "Fuga",
 		},
 	}
 }

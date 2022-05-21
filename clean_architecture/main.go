@@ -2,11 +2,11 @@ package main
 
 import (
 	"database/sql"
+	"net/http"
+
 	"github.com/tzmfreedom/go-sample/clean_architecture/controller"
 	"github.com/tzmfreedom/go-sample/clean_architecture/database"
 	"github.com/tzmfreedom/go-sample/clean_architecture/usecase"
-	"net/http"
-
 )
 
 func main() {

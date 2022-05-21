@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"github.com/tzmfreedom/go-sample/clean_architecture/usecase"
 	"net/http"
+
+	"github.com/tzmfreedom/go-sample/clean_architecture/usecase"
 )
 
 type Controller struct {
