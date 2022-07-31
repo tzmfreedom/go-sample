@@ -1,0 +1,8 @@
+mount-dir: "/tmp/x"
+ 
+http:
+  addr: ":20204"
+
+consul:
+  url: "http://localhost:8500"
+  advertise-url: "http://localhost:20204"
