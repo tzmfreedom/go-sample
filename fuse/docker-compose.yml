@@ -1,0 +1,9 @@
+version: '2'
+services:
+  fuse:
+    build: .
+    command: /bin/bash
+    privileged: true
+    tty: true
+    volumes:
+      - .:/app
