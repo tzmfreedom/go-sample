@@ -2,7 +2,7 @@ version: '2'
 services:
   fuse:
     build: .
-    command: /bin/bash
+    command: go run main.go
     privileged: true
     tty: true
     volumes:
