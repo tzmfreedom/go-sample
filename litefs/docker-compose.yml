@@ -1,0 +1,8 @@
+version: '2'
+services:
+  litefs:
+    build: .
+    volumes:
+      - .:/app/
+    privileged: true
+    tty: true
