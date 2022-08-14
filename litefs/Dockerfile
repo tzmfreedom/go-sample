@@ -16,14 +16,21 @@ ENV GOROOT=/usr/local/go
 ENV GOPATH=$HOME/go
 ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
-WORKDIR /root
-RUN git clone https://github.com/superfly/litefs
+ENV ARCH="amd64"
+ENV VERSION="0.1.0"
 
-WORKDIR /root/litefs
-RUN go build -ldflags "-s -w -X 'main.Version=latest' -extldflags '-static'" -tags osusergo,netgo,sqlite_omit_load_extension -o /usr/local/bin/litefs ./cmd/litefs
+WORKDIR /tmp
+RUN wget "https://github.com/superfly/litefs/releases/download/v${VERSION}/litefs-v${VERSION}-linux-${ARCH}.tar.gz" && \
+    tar xvf "litefs-v${VERSION}-linux-${ARCH}.tar.gz" && \
+    mv litefs /usr/local/bin
+
+# RUN git clone https://github.com/superfly/litefs
+#
+# WORKDIR /root/litefs
+# RUN go build -ldflags "-s -w -X 'main.Version=latest' -extldflags '-static'" -tags osusergo,netgo,sqlite_omit_load_extension -o /usr/local/bin/litefs ./cmd/litefs
 
 RUN mkdir /tmp/x /tmp/y
-RUN apt install -y make
+RUN apt install -y make gcc
 WORKDIR /app
 
 CMD make consul

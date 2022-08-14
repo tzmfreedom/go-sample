@@ -10,7 +10,6 @@ console A
 ```
 make console
 
-cd /app
 make run CONFIG=litefs.yml
 ```
 
@@ -18,7 +17,6 @@ console B
 ```
 make console
 
-cd /app
 make run CONFIG=litefs2.yml
 ```
 
@@ -26,7 +24,8 @@ make run CONFIG=litefs2.yml
 
 console C
 ```
-sqlite3 /tmp/x/hoge
+make run/sqlite3 FILE=/tmp/x/hoge
+sqlite3 
 
 > CREATE TABLE hoge(id integer);
 > INSERT INTO hoge VALUES (1);
@@ -34,7 +33,7 @@ sqlite3 /tmp/x/hoge
 
 console D
 ```
-sqlite3 /tmp/x/hoge
+make run/sqlite3 FILE=/tmp/y/hoge
 
 > SELECT * FROM hoge;
 ```

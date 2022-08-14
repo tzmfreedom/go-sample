@@ -17,3 +17,6 @@ consul:
 
 run:
 	litefs -config $(CONFIG)
+
+run/sqlite3:
+	docker-compose exec litefs /bin/bash -c "sqlite3 $(FILE)"

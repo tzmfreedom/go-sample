@@ -2,16 +2,14 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
-	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"os"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	fmt.Println(os.Args[0])
-	return
-	db, err := sql.Open("sqlite3", os.Args[0])
+	db, err := sql.Open("sqlite3", os.Args[1])
 	if err != nil {
 		log.Fatal(err)
 	}
